@@ -37,13 +37,14 @@ class Websocket():
     self.s = socket.socket(ai[0], ai[1], ai[2])
     try:
       self.s.connect(ai[-1])
+      self.s = self.s.makefile("rwb", buffering=False, newline="\r\n")
       if proto == "wss:":
         context = tls.SSLContext(tls.PROTOCOL_TLS_CLIENT)
         context.verify_mode = tls.CERT_NONE
         self.s = context.wrap_socket(self.s, server_hostname=host)
 
 
-      sec_websocket_key = b2a_base64(os.urandom(16)).strip()
+      sec_websocket_key = b2a_base64(os.urandom(16)).decode().strip()
 
       # Create the HTTP GET request message
       headers_list = [

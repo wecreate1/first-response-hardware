@@ -39,31 +39,31 @@ class Alarm:
   def play_alarm(self, iterations):
     playing = True
     self.play_tone()
-    next_execution = (time.ticks_ms() / 1_000) + self.duration
+    next_execution = (time.time()) + self.duration
     print("Alarm started, for " + str(self.duration) + " seconds")
     # Play the alarm, make sure not to stop until the alarm does
     played_count = 1
     while played_count < iterations:
-      current_time = time.ticks_ms() / 1_000
+      current_time = time.time()
       if current_time >= next_execution:
         if playing:
           print("Alarm stopped, waiting 0.1 seconds")
           self.stop_tone()
           playing = False
-          next_execution = (time.ticks_ms() / 1_000) + 0.1
+          next_execution = (time.time()) + 0.1
         else:
           print("Alarm started, for " + str(self.duration) + " seconds")
           self.play_tone()
           playing = True
           played_count += 1
-          next_execution = (time.ticks_ms() / 1_000) + self.duration
+          next_execution = (time.time()) + self.duration
       yield
     
     # If beep is still on
     if playing:
-      current_time = time.ticks_ms() / 1_000
+      current_time = time.time()
       while current_time < next_execution:
-        current_time = time.ticks_ms() / 1_000
+        current_time = time.time()
         yield
       print("Final Alarm stopped")
       self.stop_tone()

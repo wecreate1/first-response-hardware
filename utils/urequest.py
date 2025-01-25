@@ -33,28 +33,29 @@ def urlopen(url, data=None, method="GET", headers=None):
   s = socket.socket(ai[0], ai[1], ai[2])
   try:
     s.connect(ai[-1])
+    s = s.makefile('rwb', buffering=False, newline='\r\n')
     if proto == "https:":
       context = tls.SSLContext(tls.PROTOCOL_TLS_CLIENT)
       context.verify_mode = tls.CERT_NONE
       s = context.wrap_socket(s, server_hostname=host)
 
-    s.write(method)
+    s.write(method.encode())
     s.write(b" /")
-    s.write(path)
+    s.write(path.encode())
     s.write(b" HTTP/1.0\r\nHost: ")
-    s.write(host)
+    s.write(host.encode())
     s.write(b"\r\n")
 
     if headers:
       for k, v in headers.items():
-        s.write(k)
+        s.write(k.encode())
         s.write(b": ")
-        s.write(v)
+        s.write(v.encode())
         s.write(b"\r\n")
 
     if data:
       s.write(b"Content-Length: ")
-      s.write(str(len(data)))
+      s.write(str(len(data)).encode())
       s.write(b"\r\n")
     s.write(b"\r\n")
     if data:

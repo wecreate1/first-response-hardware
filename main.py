@@ -51,9 +51,9 @@ created_thread = False
 wlan = connect_to_wifi(ssid, password)
 # print(get_mac_address(wlan))
 
-url = f"wss://{server_url}"
+url = f"ws://{server_url}"
 headers = {
-  "Cookie": "token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzBhMGI1MzNhOTkwN2U2Nzg5ZjJjYTMiLCJyb2xlcyI6WyJ1c2VyIl0sImlhdCI6MTczMTczNzI4NywiZXhwIjoxNzMyMzQyMDg3fQ.4nhTk5q78FTL_3v59lctoquA5aqadaHvJmT1M5RbgTw; Path=/; HttpOnly; Expires=Sat, 23 Nov 2024 06:08:07 GMT;",
+  "Cookie": "token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzkxYTc3MjA4YzhiZDE1YTRlZjgzNzMiLCJyb2xlcyI6WyJ1c2VyIl0sImlhdCI6MTczNzc3ODE2MSwiZXhwIjoxNzM4MzgyOTYxfQ.j058GKHjJN_CR7eEWNtAozcrDOmzdjoNMZ-TSwUoCGw; Path=/; HttpOnly; Expires=Sat, 23 Nov 2024 06:08:07 GMT;",
 }
 subprotocols = ["graphql-transport-ws"]
 
@@ -86,7 +86,7 @@ on_message()
 ws = Websocket(url, headers, subprotocols=subprotocols)
 ws.initialize()
 
-fire_trigger_time = (time.ticks_ms() / 1_000) + 10
+fire_trigger_time = (int(time.time())) + 10
 
 query = f"""
   subscription{{
@@ -160,12 +160,12 @@ def detect_fire():
 
 
 def blink_cross(color):
-  next_execution = time.ticks_ms() / 1_000
+  next_execution = time.time()
   displaying_cross = False
   while True:
     if state == "compromised":
       # Blink the cross
-      current_time = time.ticks_ms() / 1_000
+      current_time = time.time()
       if displaying_cross:
         if current_time > next_execution:
           print("Cross reset!")
@@ -190,9 +190,9 @@ def alarm_task(*args, **kwargs):
   play_alarm_gen = None
   # alarm.play_alarm(4)
 
-  next_execution = time.ticks_ms() / 1_000
+  next_execution = time.time()
   while True:
-    current_time = time.ticks_ms() / 1_000
+    current_time = time.time()
     if playing_alarm and play_alarm_gen:
       try:
         next(play_alarm_gen)
@@ -200,7 +200,7 @@ def alarm_task(*args, **kwargs):
         print("Alarm stopped, waiting 0.8 seconds")
         playing_alarm = False
         play_alarm_gen = None
-        next_execution = (time.ticks_ms() / 1_000) + 0.8
+        next_execution = (time.time()) + 0.8
     elif current_time >= next_execution and detected_fire:
       playing_alarm = True
       play_alarm_gen = alarm.play_alarm(4)

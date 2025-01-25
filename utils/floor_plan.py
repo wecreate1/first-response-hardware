@@ -9,7 +9,7 @@ def get_floor_plan(floor_id, headers=None, ws=None):
   if floor_id is None:
     return "{}"
 
-  url = f"https://{server_url}/graphql"
+  url = f"http://{server_url}/graphql"
   query = """
     query($floorId: ID!){
       getFloorPlan(id: $floorId) {
